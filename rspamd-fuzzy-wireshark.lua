@@ -12,7 +12,8 @@ do -- scope
     local vs_cmds = { 
         [0]= "FUZZY_CHECK",
         [1]= "FUZZY_ADD",
-        [2]= "FUZZY_DEL"
+        [2]= "FUZZY_DEL",
+        [3]= "FUZZY_STAT"
     }
     local version = ProtoField.uint8("fuzzy.version", "version", base.DEC)
     local cmd = ProtoField.uint8("fuzzy.cmd", "cmd", base.DEC, vs_cmds)
@@ -23,6 +24,7 @@ do -- scope
     -- blake2b digest
     local digest = ProtoField.bytes("fuzzy.digest", "digest", base.SPACE)
     local oneShingle = ProtoField.uint64("fuzzy.shingle", "shingle", base.DEC)
+    -- static const guchar fuzzy_encrypted_magic[4] = {'r', 's', 'f', 'e'};
 
     -- struct fuzzy_cmd  { /* attribute(packed) */
     -- int32_t value;
@@ -31,9 +33,10 @@ do -- scope
     -- float prob;
     -- };
     local prob = ProtoField.float("fuzzy.prob", "prob", base.DEC)
+    local ts = ProtoField.uint32("fuzzy.ts", "ts", base.DEC)
 
     
-    proto.fields = { version, cmd, shingles_count, flag, value, tag,prob,digest, oneShingle}
+    proto.fields = { version, cmd, shingles_count, flag, value, tag,prob,digest, oneShingle, ts}
 
     function proto.dissector(buffer, pinfo, tree)
         pinfo.cols.protocol = 'RspamD fuzzy'
